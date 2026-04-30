@@ -3,6 +3,7 @@ package zoll_h1.training.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import zoll_h1.training.exception.ResourceNotFoundException;
 import zoll_h1.training.model.Task;
 import zoll_h1.training.service.TaskService;
 
@@ -27,7 +28,7 @@ public class TaskController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Task> getTaskById(@PathVariable Long id) {
-        Task task = taskService.getTaskById(id).orElseThrow(() -> new RuntimeException("Not found task by id: " + id));
+        Task task = taskService.getTaskById(id).orElseThrow(() -> new ResourceNotFoundException("Not found task by id: " + id));
         return ResponseEntity.ok(task);
     }
 

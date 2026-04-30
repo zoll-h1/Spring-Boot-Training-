@@ -3,6 +3,7 @@ package zoll_h1.training.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import zoll_h1.training.exception.ResourceNotFoundException;
 import zoll_h1.training.model.User;
 import zoll_h1.training.service.UserService;
 
@@ -25,8 +26,8 @@ public class UserController {
 
     @GetMapping("/{id}")
     public ResponseEntity<User> getUserById(@PathVariable Long id) {
-        userService.getUserById(id);
-        return ResponseEntity.ok().build();
+        User user = userService.getUserById(id).orElseThrow(() -> new ResourceNotFoundException("Not found user by id: " + id));
+        return ResponseEntity.ok(user);
     }
 
     @PostMapping

@@ -3,6 +3,7 @@ package zoll_h1.training.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import zoll_h1.training.exception.ResourceNotFoundException;
 import zoll_h1.training.model.Project;
 import zoll_h1.training.service.ProjectService;
 
@@ -27,7 +28,7 @@ public class ProjectController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Project> getProjectById(Long id) {
-        Project found = projectService.getProjectById(id).orElseThrow(() -> new RuntimeException("Not found project by id: " + id));
+        Project found = projectService.getProjectById(id).orElseThrow(() -> new ResourceNotFoundException("Not found project by id: " + id));
         return ResponseEntity.ok(found);
     }
 
