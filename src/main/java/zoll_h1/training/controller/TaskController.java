@@ -3,6 +3,7 @@ package zoll_h1.training.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import zoll_h1.training.dto.TaskResponseDTO;
 import zoll_h1.training.exception.ResourceNotFoundException;
 import zoll_h1.training.model.Task;
 import zoll_h1.training.service.TaskService;
@@ -21,26 +22,26 @@ public class TaskController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Task>> getAllTasks() {
-        List<Task> tasks = taskService.getAllTasks();
+    public ResponseEntity<List<TaskResponseDTO>> getAllTasks() {
+        List<TaskResponseDTO> tasks = taskService.getAllTasks();
         return ResponseEntity.ok(tasks);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Task> getTaskById(@PathVariable Long id) {
-        Task task = taskService.getTaskById(id).orElseThrow(() -> new ResourceNotFoundException("Not found task by id: " + id));
-        return ResponseEntity.ok(task);
+    public ResponseEntity<TaskResponseDTO> getTaskById(@PathVariable Long id) {
+        TaskResponseDTO taskResponseDTO = taskService.getTaskById(id);
+        return ResponseEntity.ok(taskResponseDTO);
     }
 
     @PostMapping
     public ResponseEntity<Task> createTask(@RequestBody Task task) {
-        Task created = taskService.createTask(task);
-        return ResponseEntity.ok(created);
+        TaskResponseDTO createdDTO = taskService.createTask(task);
+        return ResponseEntity.ok(createdDTO);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Task> updateTask(@PathVariable Long id, @RequestBody Task updateTaskDetails) {
-        Task updated = taskService.updateTask(id, updateTaskDetails);
+    public TaskResponseDTO updateTask(@PathVariable Long id, @RequestBody Task updateTaskDetails) {
+        TaskResponseDTO updated = taskService.updateTask(id, updateTaskDetails);
         return ResponseEntity.ok(updated);
     }
 
@@ -51,8 +52,8 @@ public class TaskController {
     }
 
     @PostMapping("/assign/{projectId}/{userId}")
-    public ResponseEntity<Task> createAndAssign(@RequestBody Task task, @PathVariable Long projectId , @PathVariable Long userId) {
-        Task savedTask = taskService.createAndAssignTask(task, projectId, userId);
+    public ResponseEntity<TaskResponseDTO> createAndAssign(@RequestBody Task task, @PathVariable Long projectId , @PathVariable Long userId) {
+        TaskResponseDTO savedTask = taskService.createAndAssignTask(task, projectId, userId);
         return ResponseEntity.ok(savedTask);
     }
 }
