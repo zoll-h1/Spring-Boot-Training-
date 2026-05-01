@@ -2,6 +2,7 @@ package zoll_h1.training.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import zoll_h1.training.dto.TaskRequestDTO;
 import zoll_h1.training.dto.TaskResponseDTO;
 import zoll_h1.training.exception.ResourceNotFoundException;
 import zoll_h1.training.model.Project;
@@ -29,9 +30,10 @@ public class TaskService {
         this.projectRepository = projectRepository;
     }
 
-    public TaskResponseDTO createTask(Task task) {
-        Task created = taskRepository.save(task);
-        return mapToDTO(task);
+    public TaskResponseDTO createTask(TaskRequestDTO taskRequestDTO) {
+        Task task = mapToEntity(taskRequestDTO);
+        Task saved = taskRepository.save(task);
+        return mapToDTO(saved);
     }
 
     public List<TaskResponseDTO> getAllTasks() {
@@ -47,14 +49,13 @@ public class TaskService {
         return mapToDTO(task);
     }
 
-    public TaskResponseDTO updateTask(Long id, Task updatedTask) {
-        Task task = taskRepository.findById(id).map(existingTask -> {
-            existingTask.setTitle(updatedTask.getTitle());
-            existingTask.setDescription(updatedTask.getDescription());
-            existingTask.setStatus(updatedTask.getStatus());
-            return taskRepository.save(existingTask);
-        }).orElseThrow(() -> new RuntimeException("Task not found by id: " + id));
-        return mapToDTO(task);
+    public TaskResponseDTO updateTask(Long id, TaskRequestDTO updatedTask) {
+        Task task = taskRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Not found task with id: " + id));
+        task.setTitle(updatedTask.getTitle());
+        task.setDescription(updatedTask.getDescription());
+        task.setStatus(updatedTask.getStatus());
+        Task saved = taskRepository.save(task);
+        return mapToDTO(saved);
     }
 
     public void deleteTask(Long id) {
@@ -83,6 +84,13 @@ public class TaskService {
             dto.setAssignedUsername(task.getUser().getUsername());
         }
         return dto;
+    }
+    private Task mapToEntity(TaskRequestDTO requestDTO) {
+        Task task = new Task();
+        task.setTitle(requestDTO.getTitle());
+        task.setDescription(requestDTO.getDescription());
+        task.setStatus(requestDTO.getStatus());
+        return task;
     }
 
 }

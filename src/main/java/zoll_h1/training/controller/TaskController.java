@@ -1,8 +1,10 @@
 package zoll_h1.training.controller;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import zoll_h1.training.dto.TaskRequestDTO;
 import zoll_h1.training.dto.TaskResponseDTO;
 import zoll_h1.training.exception.ResourceNotFoundException;
 import zoll_h1.training.model.Task;
@@ -34,13 +36,13 @@ public class TaskController {
     }
 
     @PostMapping
-    public ResponseEntity<Task> createTask(@RequestBody Task task) {
-        TaskResponseDTO createdDTO = taskService.createTask(task);
+    public ResponseEntity<TaskResponseDTO> createTask(@Valid @RequestBody TaskRequestDTO taskRequestDTO) {
+        TaskResponseDTO createdDTO = taskService.createTask(taskRequestDTO);
         return ResponseEntity.ok(createdDTO);
     }
 
     @PutMapping("/{id}")
-    public TaskResponseDTO updateTask(@PathVariable Long id, @RequestBody Task updateTaskDetails) {
+    public ResponseEntity<TaskResponseDTO> updateTask(@PathVariable Long id, @Valid @RequestBody TaskRequestDTO updateTaskDetails) {
         TaskResponseDTO updated = taskService.updateTask(id, updateTaskDetails);
         return ResponseEntity.ok(updated);
     }
